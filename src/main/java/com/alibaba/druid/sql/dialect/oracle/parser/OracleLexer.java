@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2018 Alibaba Group Holding Ltd.
+ * Copyright 1999-2017 Alibaba Group Holding Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 package com.alibaba.druid.sql.dialect.oracle.parser;
 
-import static com.alibaba.druid.sql.parser.CharTypes.isIdentifierChar;
-import static com.alibaba.druid.sql.parser.LayoutCharacters.EOI;
+import com.alibaba.druid.sql.parser.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.alibaba.druid.sql.parser.*;
+import static com.alibaba.druid.sql.parser.CharTypes.isIdentifierChar;
+import static com.alibaba.druid.sql.parser.LayoutCharacters.EOI;
 
 public class OracleLexer extends Lexer {
 
@@ -56,7 +56,7 @@ public class OracleLexer extends Lexer {
         map.put("MERGE", Token.MERGE);
 
         map.put("MODE", Token.MODE);
-        map.put("MODEL", Token.MODEL);
+//        map.put("MODEL", Token.MODEL);
         map.put("NOWAIT", Token.NOWAIT);
         map.put("OF", Token.OF);
         map.put("PRIOR", Token.PRIOR);
@@ -75,8 +75,6 @@ public class OracleLexer extends Lexer {
 
         map.put("WAIT", Token.WAIT);
         map.put("WITH", Token.WITH);
-
-        map.put("IDENTIFIED", Token.IDENTIFIED);
 
         map.put("PCTFREE", Token.PCTFREE);
         map.put("INITRANS", Token.INITRANS);
@@ -122,21 +120,21 @@ public class OracleLexer extends Lexer {
 
     public OracleLexer(char[] input, int inputLength, boolean skipComment){
         super(input, inputLength, skipComment);
-        super.keywods = DEFAULT_ORACLE_KEYWORDS;
+        super.keywords = DEFAULT_ORACLE_KEYWORDS;
     }
 
     public OracleLexer(String input){
         super(input);
         this.skipComment = true;
         this.keepComments = true;
-        super.keywods = DEFAULT_ORACLE_KEYWORDS;
+        super.keywords = DEFAULT_ORACLE_KEYWORDS;
     }
 
     public OracleLexer(String input, SQLParserFeature... features){
         super(input);
         this.skipComment = true;
         this.keepComments = true;
-        super.keywods = DEFAULT_ORACLE_KEYWORDS;
+        super.keywords = DEFAULT_ORACLE_KEYWORDS;
 
         for (SQLParserFeature feature : features) {
             config(feature, true);
@@ -188,7 +186,7 @@ public class OracleLexer extends Lexer {
             for (; ; ) {
                 ch = charAt(++pos);
 
-                if (!isIdentifierChar(ch)) {
+                if (!isIdentifierChar(ch) && ch != ':') {
                     break;
                 }
 
@@ -214,7 +212,7 @@ public class OracleLexer extends Lexer {
         this.ch = charAt(pos);
 
         stringVal = addSymbol();
-        Token tok = keywods.getKeyword(stringVal);
+        Token tok = keywords.getKeyword(stringVal);
         if (tok != null) {
             token = tok;
         } else {
@@ -334,6 +332,8 @@ public class OracleLexer extends Lexer {
         }
     }
 
+
+
     public void scanNumber() {
         mark = pos;
 
@@ -372,7 +372,7 @@ public class OracleLexer extends Lexer {
             }
         }
 
-        if (ch == 'e' || ch == 'E') {
+        if ((ch == 'e' || ch == 'E') && isDigit2(charAt(pos + 1))) {
             bufPos++;
             ch = charAt(++pos);
 

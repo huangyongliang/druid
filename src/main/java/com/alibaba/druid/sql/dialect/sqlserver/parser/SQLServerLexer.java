@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2018 Alibaba Group Holding Ltd.
+ * Copyright 1999-2017 Alibaba Group Holding Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 package com.alibaba.druid.sql.dialect.sqlserver.parser;
 
-import static com.alibaba.druid.sql.parser.LayoutCharacters.EOI;
-import static com.alibaba.druid.sql.parser.Token.IDENTIFIER;
+import com.alibaba.druid.sql.parser.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.alibaba.druid.sql.parser.*;
+import static com.alibaba.druid.sql.parser.LayoutCharacters.EOI;
+import static com.alibaba.druid.sql.parser.Token.IDENTIFIER;
 
 public class SQLServerLexer extends Lexer {
 
@@ -53,17 +53,17 @@ public class SQLServerLexer extends Lexer {
 
     public SQLServerLexer(char[] input, int inputLength, boolean skipComment){
         super(input, inputLength, skipComment);
-        super.keywods = DEFAULT_SQL_SERVER_KEYWORDS;
+        super.keywords = DEFAULT_SQL_SERVER_KEYWORDS;
     }
 
     public SQLServerLexer(String input){
         super(input);
-        super.keywods = DEFAULT_SQL_SERVER_KEYWORDS;
+        super.keywords = DEFAULT_SQL_SERVER_KEYWORDS;
     }
 
     public SQLServerLexer(String input, SQLParserFeature... features){
         super(input);
-        super.keywods = DEFAULT_SQL_SERVER_KEYWORDS;
+        super.keywords = DEFAULT_SQL_SERVER_KEYWORDS;
         for (SQLParserFeature feature : features) {
             config(feature, true);
         }

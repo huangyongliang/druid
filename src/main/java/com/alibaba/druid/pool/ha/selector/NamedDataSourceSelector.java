@@ -15,10 +15,11 @@
  */
 package com.alibaba.druid.pool.ha.selector;
 
-import com.alibaba.druid.pool.ha.HighAvailableDataSource;
+import java.util.Map;
 
 import javax.sql.DataSource;
-import java.util.Map;
+
+import com.alibaba.druid.pool.ha.HighAvailableDataSource;
 
 /**
  * Use the given name in ThreadLocal variable to choose DataSource.
@@ -36,13 +37,16 @@ public class NamedDataSourceSelector implements DataSourceSelector {
     }
 
     @Override
-    public boolean isSame(String name) {
-        return getName().equalsIgnoreCase(name);
+    public void init() {
+    }
+
+    @Override
+    public void destroy() {
     }
 
     @Override
     public String getName() {
-        return "byName";
+        return DataSourceSelectorEnum.BY_NAME.getName();
     }
 
     @Override
@@ -51,7 +55,7 @@ public class NamedDataSourceSelector implements DataSourceSelector {
             return null;
         }
 
-        Map<String, DataSource> dataSourceMap = highAvailableDataSource.getDataSourceMap();
+        Map<String, DataSource> dataSourceMap = highAvailableDataSource.getAvailableDataSourceMap();
         if (dataSourceMap == null || dataSourceMap.isEmpty()) {
             return null;
         }

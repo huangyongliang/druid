@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2018 Alibaba Group Holding Ltd.
+ * Copyright 1999-2017 Alibaba Group Holding Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,11 +67,10 @@ public enum Token {
     EXPLAIN("EXPLAIN"), 
     FOR("FOR"), 
     IF("IF"),
-    SORT("SORT"),
-   
-   
-    ALL("ALL"), 
-    UNION("UNION"), 
+
+    GLOBAL("GLOBAL"),
+    ALL("ALL"),
+    UNION("UNION"),
     EXCEPT("EXCEPT"), 
     INTERSECT("INTERSECT"), 
     MINUS("MINUS"),
@@ -80,8 +79,9 @@ public enum Token {
     RIGHT("RIGHT"), 
     FULL("FULL"), 
     OUTER("OUTER"), 
-    JOIN("JOIN"), 
-    ON("ON"), 
+    JOIN("JOIN"),
+    STRAIGHT_JOIN("STRAIGHT_JOIN"),
+    ON("ON"),
     SCHEMA("SCHEMA"), 
     CAST("CAST"),
     COLUMN("COLUMN"),
@@ -100,9 +100,6 @@ public enum Token {
     END("END"), 
     EXISTS("EXISTS"), 
     IN("IN"),
-    CONTAINS("CONTAINS"),
-    RLIKE("RLIKE"),
-    FULLTEXT("FULLTEXT"),
 
     NEW("NEW"), 
     ASC("ASC"), 
@@ -128,11 +125,11 @@ public enum Token {
     KILL("KILL"),
     IDENTIFIED("IDENTIFIED"),
     PASSWORD("PASSWORD"),
-    ALGORITHM("ALGORITHM"),
     DUAL("DUAL"),
     BINARY("BINARY"),
     SHOW("SHOW"),
     REPLACE("REPLACE"),
+    PERIOD("PERIOD"),
 
     BITS,
 
@@ -181,6 +178,8 @@ public enum Token {
     OVER("OVER"),
     TYPE("TYPE"),
     ILIKE("ILIKE"),
+    RLIKE("RLIKE"),
+    FULLTEXT("FULLTEXT"),
 
     // oracle
     START("START"),
@@ -189,7 +188,7 @@ public enum Token {
     WITH("WITH"),
     EXTRACT("EXTRACT"),
     CURSOR("CURSOR"),
-    MODEL("MODEL"),
+//    MODEL("MODEL"),
     MERGE("MERGE"),
     MATCHED("MATCHED"),
     ERRORS("ERRORS"),
@@ -239,7 +238,7 @@ public enum Token {
     KEEP_DUPLICATES("KEEP_DUPLICATES"),
     EXCEPTIONS("EXCEPTIONS"),
     PURGE("PURGE"),
-    
+
     COMPUTE("COMPUTE"),
     ANALYZE("ANALYZE"),
     OPTIMIZE("OPTIMIZE"),
@@ -263,6 +262,8 @@ public enum Token {
     LITERAL_CHARS,
     LITERAL_NCHARS,
 
+    LITERAL_PATH,
+
     LITERAL_ALIAS,
     LINE_COMMENT,
     MULTI_LINE_COMMENT,
@@ -275,7 +276,9 @@ public enum Token {
     PARTITION,
     PARTITIONED,
     OVERWRITE,
-    
+    SORT,
+    LATERAL,
+
     // Teradata
     SEL("SEL"),
     LOCKING("LOCKING"),
@@ -287,7 +290,8 @@ public enum Token {
     FORMAT("FORMAT"),
     QUALIFY("QUALIFY"),
     MOD("MOD"),
-    
+    CONTAINS("CONTAINS"),
+
     CONCAT("CONCAT"), // DB2
 
     UPSERT("UPSERT"), // Phoenix

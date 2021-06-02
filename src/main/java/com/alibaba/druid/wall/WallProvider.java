@@ -30,9 +30,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLName;
 import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.druid.sql.ast.statement.SQLUpdateStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlHintStatement;
 import com.alibaba.druid.sql.parser.Lexer;
@@ -88,7 +90,7 @@ public abstract class WallProvider {
 
     public final WallDenyStat                             commentDeniedStat       = new WallDenyStat();
 
-    protected String                                      dbType                  = null;
+    protected DbType                                      dbType                  = null;
     protected final AtomicLong                            checkCount              = new AtomicLong();
     protected final AtomicLong                            hardCheckCount          = new AtomicLong();
     protected final AtomicLong                            whiteListHitCount       = new AtomicLong();
@@ -102,6 +104,10 @@ public abstract class WallProvider {
     }
 
     public WallProvider(WallConfig config, String dbType){
+        this(config, DbType.of(dbType));
+    }
+
+    public WallProvider(WallConfig config, DbType dbType){
         this.config = config;
         this.dbType = dbType;
     }
@@ -703,7 +709,19 @@ public abstract class WallProvider {
             }
         } else {
             if ((!updateCheckHandlerEnable) && sql.length() < MAX_SQL_LENGTH) {
-                sqlStat = addWhiteSql(sql, tableStat, context.getFunctionStats(), syntaxError);
+                boolean selectLimit = false;
+                if (config.getSelectLimit() > 0) {
+                    for (SQLStatement stmt : statementList) {
+                        if (stmt instanceof SQLSelectStatement) {
+                            selectLimit = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!selectLimit) {
+                    sqlStat = addWhiteSql(sql, tableStat, context.getFunctionStats(), syntaxError);
+                }
             }
         }
         

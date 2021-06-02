@@ -15,6 +15,9 @@
  */
 package com.alibaba.druid.util;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
 
@@ -23,7 +26,10 @@ import com.alibaba.druid.support.logging.LogFactory;
  */
 public class StringUtils {
 
-    private final static Log LOG = LogFactory.getLog(StringUtils.class);
+    private static final Log LOG = LogFactory.getLog(StringUtils.class);
+
+    private StringUtils() {
+    }
 
     /**
      * Example: subString("12345","1","4")=23
@@ -46,18 +52,7 @@ public class StringUtils {
      * @return
      */
     public static String subString(String src, String start, String to) {
-        int indexFrom = start == null ? 0 : src.indexOf(start);
-        int indexTo = to == null ? src.length() : src.indexOf(to);
-        if (indexFrom < 0 || indexTo < 0 || indexFrom > indexTo) {
-            return null;
-        }
-
-        if (null != start) {
-            indexFrom += start.length();
-        }
-
-        return src.substring(indexFrom, indexTo);
-
+        return subString(src, start, to, false);
     }
 
     /**
@@ -70,11 +65,13 @@ public class StringUtils {
      * @return
      */
     public static String subString(String src, String start, String to, boolean toLast) {
-        if(!toLast) {
-            return subString(src, start, to);
-        }
         int indexFrom = start == null ? 0 : src.indexOf(start);
-        int indexTo = to == null ? src.length() : src.lastIndexOf(to);
+        int indexTo;
+        if (to == null) {
+            indexTo = src.length();
+        } else {
+            indexTo = toLast ? src.lastIndexOf(to) : src.indexOf(to);
+        }
         if (indexFrom < 0 || indexTo < 0 || indexFrom > indexTo) {
             return null;
         }
@@ -84,7 +81,6 @@ public class StringUtils {
         }
 
         return src.substring(indexFrom, indexTo);
-
     }
 
     /**
@@ -122,16 +118,8 @@ public class StringUtils {
         return a.equalsIgnoreCase(b);
     }
 
-    public static boolean isEmpty(String value) {
-        return isEmpty((CharSequence) value);
-    }
-
     public static boolean isEmpty(CharSequence value) {
-        if (value == null || value.length() == 0) {
-            return true;
-        }
-
-        return false;
+        return value == null || value.length() == 0;
     }
     
     public static int lowerHashCode(String text) {
@@ -152,7 +140,7 @@ public class StringUtils {
     }
 
     public static boolean isNumber(String str) {
-        if (str.length() == 0) {
+        if (str == null || str.length() == 0) {
             return false;
         }
         int sz = str.length();
@@ -251,7 +239,7 @@ public class StringUtils {
     }
 
     public static boolean isNumber(char[] chars) {
-        if (chars.length == 0) {
+        if (chars == null || chars.length == 0) {
             return false;
         }
         int sz = chars.length;
@@ -340,11 +328,65 @@ public class StringUtils {
                 // not allowing L with an exponent
                 return foundDigit && !hasExp;
             }
+
+            if (ch == '.') {
+                return true;
+            }
             // last character is illegal
             return false;
         }
         // allowSigns is true iff the val ends in 'E'
         // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
         return !allowSigns && foundDigit;
+    }
+
+    public static String formatDateTime19(long millis, TimeZone timeZone) {
+        Calendar cale = timeZone == null
+                ? Calendar.getInstance()
+                : Calendar.getInstance(timeZone);
+        cale.setTimeInMillis(millis);
+
+        int year = cale.get(Calendar.YEAR);
+        int month = cale.get(Calendar.MONTH) + 1;
+        int dayOfMonth = cale.get(Calendar.DAY_OF_MONTH);
+        int hour = cale.get(Calendar.HOUR_OF_DAY);
+        int minute = cale.get(Calendar.MINUTE);
+        int second = cale.get(Calendar.SECOND);
+
+        char[] chars = new char[19];
+        chars[0] = (char) (year/1000 + '0');
+        chars[1] = (char) ((year/100)%10 + '0');
+        chars[2] = (char) ((year/10)%10 + '0');
+        chars[3] = (char) (year%10 + '0');
+        chars[4] = '-';
+        chars[5] = (char) (month/10 + '0');
+        chars[6] = (char) (month%10 + '0');
+        chars[7] = '-';
+        chars[8] = (char) (dayOfMonth/10 + '0');
+        chars[9] = (char) (dayOfMonth%10 + '0');
+        chars[10] = ' ';
+        chars[11] = (char) (hour/10 + '0');
+        chars[12] = (char) (hour%10 + '0');
+        chars[13] = ':';
+        chars[14] = (char) (minute/10 + '0');
+        chars[15] = (char) (minute%10 + '0');
+        chars[16] = ':';
+        chars[17] = (char) (second/10 + '0');
+        chars[18] = (char) (second%10 + '0');
+        return new String(chars);
+    }
+
+    public static String removeNameQuotes(String s) {
+        if (s == null || s.length() <= 1) {
+            return null;
+        }
+        int len = s.length();
+        char c0 = s.charAt(0);
+        char last = s.charAt(len - 1);
+
+        if (c0 == last && (c0 == '`' || c0 == '\'' || c0 == '\"') ) {
+            return s.substring(1, len - 1);
+        }
+        return s;
     }
 }

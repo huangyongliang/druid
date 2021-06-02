@@ -15,15 +15,19 @@
  */
 package com.alibaba.druid.wall;
 
-import com.alibaba.druid.sql.SQLUtils;
-import com.alibaba.druid.wall.spi.WallVisitorUtils;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-
 import static com.alibaba.druid.util.Utils.getBoolean;
 import static com.alibaba.druid.util.Utils.getInteger;
 import static com.alibaba.druid.wall.spi.WallVisitorUtils.loadResource;
+
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.wall.spi.WallVisitorUtils;
 
 public class WallConfig implements WallConfigMBean {
 
@@ -697,13 +701,29 @@ public class WallConfig implements WallConfigMBean {
         void filterResultsetTenantColumn(Object value);
     }
 
-    public boolean isSelelctAllow() {
+    public boolean isSelectAllow() {
         return selelctAllow;
     }
 
-    public void setSelelctAllow(boolean selelctAllow) {
+
+    public void setSelectAllow(boolean selelctAllow) {
         this.selelctAllow = selelctAllow;
     }
+
+    /**
+     * @deprecated use isSelectAllow
+     */
+    public boolean isSelelctAllow() {
+        return isSelectAllow();
+    }
+
+    /**
+     * @deprecated use setSelelctAllow
+     */
+    public void setSelelctAllow(boolean selelctAllow) {
+        this.setSelectAllow(selelctAllow);
+    }
+
 
     public boolean isSelectWhereAlwayTrueCheck() {
         return selectWhereAlwayTrueCheck;
@@ -823,7 +843,7 @@ public class WallConfig implements WallConfigMBean {
         {
             Boolean propertyValue = getBoolean(properties, "druid.wall.selelctAllow");
             if (propertyValue != null) {
-                this.setSelelctAllow(propertyValue);
+                this.setSelectAllow(propertyValue);
             }
         }
         {
